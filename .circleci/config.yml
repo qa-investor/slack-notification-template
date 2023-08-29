@@ -1,0 +1,64 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@4.8.3
+
+jobs:
+  e2e_tests_job:
+    docker:
+      - image: cimg/node:14.17.5-browsers
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install npm dependencies
+          command: |
+            npm install
+            npm install node-fetch
+            npm install csv-parser
+            npm install dotenv
+      - run:
+          name: Install Playwright dependencies
+          command: sudo npx playwright install-deps
+      - run:
+          name: Install Allure plugin
+          command: sudo npm install -g allure-commandline --save-dev #installs allure locally
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.cache
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Run tests
+          command: npx codeceptjs run --steps
+      - run:
+          name: Generate allure report
+          command: allure generate
+          when: always
+      - store_artifacts:
+          path: allure-report/
+      - store_artifacts:
+          path: output/videos
+      - run:
+          name: Send Slack Notification
+          command: ./slack_notification.py
+          when: always
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - test_job:
+          context: slack-secrets
+  periodical:
+    triggers:
+      - schedule:
+          cron: #add scheduled time here
+          filters:
+            #add if any
+    jobs:
+      - test_job:
+          context: slack-secrets

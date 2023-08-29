@@ -15,7 +15,7 @@
 
 # How To use (Js Version)
 1. In your project, ensure you have allure reporting enabled.
-2. Create a Js script in your repository. Name it something like `slack_notification.js`
+2. Create a Js script in your repository. Name it something like `slack_notification.mjs`
 3. Install dependencies. You can define these under the dependencies step in your CircleCi config.yml.
    <br> `npm install node-fetch`
    <br> `npm install csv-parser`
