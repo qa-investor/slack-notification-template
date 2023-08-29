@@ -12,3 +12,6 @@
           `name: Send Slack notification` <br>
           `command: ./slack_notification.py` <br>
           `when: always`
+
+# Proof of concept
+<img width="621" alt="Screenshot 2023-08-29 at 12 47 56" src="https://github.com/Jurence/slack-notification-template/assets/66213283/64e5df10-b604-4873-a5a1-96a4154340ad">
